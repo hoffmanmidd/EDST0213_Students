@@ -46,7 +46,7 @@ By now you should have read "Thorndike, Chapter 2, pp. 23-28." This measurement 
 library(tidyverse)
 
 ## READ IN DATA (from your own computer)
-Table.2.1 <- read_csv(file = "/Users/stephenhoffman/EDST0213_setup/data/Table.2.1_clean.csv") 
+Table.2.1 <- read_csv(file = "Table.2.1_clean.csv") 
 ```
 
 The dataset *should* pop up in your environment. But if not...

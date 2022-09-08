@@ -1,0 +1,97 @@
+---
+title: "Thorndike Pages 23 - 28"
+author: "Steve Hoffman"
+format: revealjs
+editor: visual
+---
+
+## Quarto
+
+*From the documentation about this method of producing documents and slide decks using R and RStudio:* This is a Quarto presentation (the replacement/enhancement of RMarkdown).
+
+Quarto enables you to weave together content and executable code into a finished presentation. To learn more about Quarto presentations see <https://quarto.org/docs/presentations/>.
+
+## Bullets
+
+When you click the **Render** button a document will be generated that includes:
+
+-   Content authored with markdown
+-   Output from executable code
+
+## Code
+
+When you click the **Render** button a presentation will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r, echo = TRUE}
+1 + 1
+```
+
+## Prerequsites
+
+Since we will be following the instructions in *R for Data Science* (RDS) we will install package called tidyverse. To access this package for the first time on your computer, paste or type into in your console
+
+install.packages("tidyverse")
+
+# Inputing, Tidying and Wrangling Thorndike pp. 23 - 28
+
+## CLEAR WORKSPACE
+```{r, echo = TRUE}
+rm(list=ls())
+```
+
+## LOAD PACKAGES
+```{r, echo = TRUE}
+library(tidyverse)
+```
+
+## READ IN DATA
+```{r, echo = TRUE}
+Table.2.1 <- read_csv(file = "Table.2.1.csv")
+```
+
+## CLEAN DATA
+```{r, echo = TRUE}
+# Create a tibble (coerce the data into tidyverse data frame)
+
+as_tibble(Table.2.1)
+```
+
+## Make column "Gender" into factors and label it
+```{r, echo = TRUE}
+Table.2.1 = Table.2.1 %>% mutate(Gender = factor(Gender, levels=c("1", "2"), labels=c("male", "female")))
+```
+
+## Nominal Scale
+
+From page 27 of Thorndike: "One way to define measurement is *the assignment of numbers to objects according to a set of rules*. The set of rules is called a scale. Knowiing the scale that has been used to assigned the numbers is critical to proper interpretation of the measurement. For example, Ms. Johnson and Mr. Cordero assigned the number 1 to their male students and the number 2 to their female students."
+
+"When numbers are used in this way, the scale is called a **nominal scale**. 
+
+## Make column "Class" into factors and label 
+In the same way, which classroom students are in is also going to be labeled with a nominal scale that we will change into a factor.
+
+```{r, echo = TRUE}
+Table.2.1 = Table.2.1 %>% mutate(Class = factor(Class, levels=c("1", "2"), labels=c("Johnson", "Cordero")))
+```
+
+## Coerce scores to be integers
+This is optional, but I wanted to make this explicit. Sometimes cutting and pasting Excel numbers can cause the data to get funky. 
+
+```{r, echo = TRUE}
+Table.2.1 <- Table.2.1 %>% mutate(Reading = as.integer(Reading), Spelling = as.integer(Spelling), Math = as.integer(Math))
+```
+
+## Look at the structure of the data
+```{r, echo = TRUE}
+str(Table.2.1)
+```
+## display summary on your console
+```{r, echo = TRUE}
+summary(Table.2.1)
+```
+
+## Write csv file of cleaned up Thorndike table
+```{r, echo = TRUE}
+write_csv(Table.2.1, "Table.2.1_clean.csv")
+```
+
