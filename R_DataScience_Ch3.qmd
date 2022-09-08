@@ -1,0 +1,261 @@
+---
+title: "R for Data Science Chapter 3"
+author: "Steve Hoffman"
+format: revealjs
+editor: visual
+---
+
+## R for Data Science Chapter 3
+
+*From the documentation about this method of producing documents and slide decks using R and RStudio:* This is a Quarto presentation (the replacement/enhancement of RMarkdown).
+
+Quarto enables you to weave together content and executable code into a finished presentation. To learn more about Quarto presentations see <https://quarto.org/docs/presentations/>.
+
+This presentation corresponds to *R for Data Science*, Chapter 3: Data visualization <https://r4ds.had.co.nz/data-visualisation.html>
+
+## Prerequsites
+
+Chapter 3 of *R for Data Science* (RDS) focuses on the package called ggplot2, one of the core members of the tidyverse. To access this package for the first time on your computer, paste or type into in your console
+
+install.packages("tidyverse")
+
+and then load tidyverse for this session by running:
+
+```{r, echo = TRUE}
+library(tidyverse)
+```
+
+## Follow RDS ch. 3 with Thorndike data
+
+By now you should have read "Thorndike, Chapter 2, pp. 23-28." This measurement textbook (*Measurement and Evaluation in Psychology and Education*, by Thorndike & Thorndike-Christ) includes a dataset for us to play with at the beginning of Chapter 2. Here's what the story says:
+
+------------------------------------------------------------------------
+
+"Catherine Johnson and Peter Cordero wanted to gather information about acheivement levels in their two sixth-grade classes. They gave their students
+
+-   a 45-item reading comprehension test provided in their current reading series,
+
+-   a 65-item review test from the mathematics book, and
+
+-   a dictation spelling test of 80 items based on the words their classes had been studying during the past 6 weeks."
+
+## Loading Table 2-1 for our use
+
+```{r, echo = TRUE}
+## LOAD PACKAGES 
+library(tidyverse)
+
+## READ IN DATA (from your own computer)
+Table.2.1 <- read_csv(file = "/Users/stephenhoffman/EDST0213_setup/data/Table.2.1_clean.csv") 
+```
+
+The dataset *should* pop up in your environment. But if not...
+
+-   Did you download the data to your computer? If not, it's there on Canvas and also on Hoffman's GitHub repository.
+-   What directory on your computer are you working from? getwd()
+
+## 3.2 First steps
+
+RDS asked:
+
+*"Do cars with big engines use more fuel than cars with small engines?"*
+
+So for us, how about
+
+*"Do students who are doing well on the 6th-grade spelling tests do better on the math review tests?"*
+
+## 3.2.1 The Table.2.1 tibble
+
+This is an electronic version of what the Thorndike book printed on pages 24 & 25 with numbers for Gender and Class replaced
+
+```{r, echo = TRUE}
+Table.2.1
+```
+
+## 3.2.2 Creating a ggplot
+
+```{r, echo = TRUE}
+ggplot(data = Table.2.1) + 
+  geom_point(mapping = aes(x = Spelling, y = Math))
+```
+
+## 3.3 Aesthetic mappings
+
+At first glance, the relationship between Spelling and Math is less clear than the RDS example about engine size and fuel efficiency.
+
+"You can add a third variable, like class, to a two dimensional scatterplot by mapping it to an aesthetic. \[in our class, we will assign"Class" (which classroom)\]
+
+"An aesthetic is a visual property of the objects in your plot.
+
+"Aesthetics include things like the size, the shape, or the color of your points.
+
+------------------------------------------------------------------------
+
+Did Mr. Cordero emphasize Math and Ms. Johnson emphasize spelling?
+
+```{r, echo = TRUE}
+ggplot(data = Table.2.1) + 
+  geom_point(mapping = aes(x = Spelling, y = Math, color = Class))
+```
+
+## 3.5 Facets
+
+The previous plot used color coding to parse what's going on between the two classrooms.
+
+Another way to approach this is to use "subplots that each display one subset of the data"
+
+In this case, we show two plots side by side. One with spelling and math for Mr. Cordero's class and a second plot for Ms. Johnson's class.
+
+------------------------------------------------------------------------
+
+```{r, echo = TRUE}
+ggplot(data = Table.2.1) + 
+  geom_point(mapping = aes(x = Spelling, y = Math)) +
+  facet_wrap(~ Class)
+```
+
+## And actually, let's go back to univariate statistics
+
+This time for spelling. Similar to the ways that the *New York Times* displays COVID infections over time, we can look at a single data variable --- like spelling test scores --- to display the counts for each score (from 38 to 76) **and** a smoothed version of the data (known as a kernel smooth).
+
+------------------------------------------------------------------------
+
+```{r, echo = TRUE}
+ggplot(Table.2.1, aes(x = Spelling, y = ..count..)) +
+  geom_histogram(binwidth = 1, color = "black", fill = "white") +
+  geom_density(lwd = .5, color = "black", adjust = .7, fill = "green", alpha = .5) + labs(title = "Spelling Scores for Two Classes") + labs(subtitle = "and overlayed density plot") +  theme_classic() 
+```
+
+## Similar to NYT COVID reporting
+
+![7-day rolling average](COVID_7day_avg.png)
+
+## 3.6 Geometric objects
+
+"A geom is the geometrical object that a plot uses to represent data. People often describe plots by the type of geom that the plot uses. For example, bar charts use bar geoms, line charts use line geoms, boxplots use boxplot geoms, and so on. Scatterplots break the trend; they use the point geom."
+
+------------------------------------------------------------------------
+
+```{r, echo = TRUE}
+ggplot(data = Table.2.1) + 
+  geom_smooth(mapping = aes(x = Spelling, y = Math, color = Class))
+```
+
+## linetype
+
+Note: some people are colorblind. (A notable psychometrician that I worked with once, for example)
+
+Using the "linetype" aesthetic works better for presentations---in this case, showing Mr. Cordero's class smoothed patterns of Spelling and Math scores as a solid kernal smooth compared to Ms Johnson's class smoothed estimate showed as a dashed curve
+
+------------------------------------------------------------------------
+
+```{r, echo = TRUE}
+ggplot(data = Table.2.1) + 
+  geom_smooth(mapping = aes(x = Spelling, y = Math, linetype = Class))
+```
+
+## Two geoms; same graph
+
+If we use more than one geom we can "make it more clear by overlaying the lines on top of the raw data and then coloring everything"
+
+For example, let's say that we want to look at the scatterplot, color-coded by the two classrooms.
+
+And we also want to show the kernal smooth with the same color scheme.
+
+And we want to differentiate the smooths using linetype
+
+And we want use different shapes for each class
+
+------------------------------------------------------------------------
+
+```{r, echo = TRUE}
+ggplot(data = Table.2.1) + 
+  geom_smooth(mapping = aes(x = Spelling, y = Math, linetype = Class, color = Class )) +
+  geom_point(mapping = aes(x = Spelling, y = Math, 
+color = Class, shape = Class))
+```
+
+## 3.7 & 3.8 Very boring Bar Chart
+
+```{r, echo = TRUE}
+ggplot(data = Table.2.1) + 
+  geom_bar(mapping = aes(x = Class))
+```
+
+------------------------------------------------------------------------
+
+```{r, echo = TRUE}
+# Maybe if we needed to know the gender breakdown
+ggplot(data = Table.2.1) + 
+  geom_bar(mapping = aes(x = Class, fill = Gender))
+```
+
+## Boxplots (and 3.9 stuff)
+
+For review (or if you haven't encountered them before), boxplots summarize the distribution of a continuous variable. A boxplots displays five summary statistics: the median (shown as a line), the first and third quartile (the box) and two whiskers showing the extent of data 1.5 IQR beyond the box, and any "outlying" points individually. (no outliers in the Spelling data here)
+
+A plot of "Spelling" (a continuous variable) grouped by classroom teacher shows that Ms Johnson's class has a higher median Spelling score (64) than Mr. Cordero's class (53).
+
+------------------------------------------------------------------------
+
+```{r, echo = TRUE}
+ggplot(data = Table.2.1, mapping = aes(x = Class, y = Spelling)) + 
+  geom_boxplot() + 
+  coord_flip() # Make Spelling the x variable and Class the y variable
+```
+
+## How about another play dataset?
+
+I didn't find an adequate data set to play with (maybe I didn't try hard enough). But here's an opportunity to work through a "stock" dataset that comes with R and a little bit of wrangling to make it all work.
+
+There's an old dataset from 1977 that's built into R called "state". If you type ?state into your Console, the Help will describe seven Data sets related to the 50 states of the USA. Let's combine three of them into one set so that we can practice the Chapter 3 materials.
+
+## Here's one way to accomplish this
+
+```{r, echo = TRUE}
+tem <- data.frame(state.x77)
+# Pick state.x77 to start 
+sta <- cbind(state.abb, tem, state.region)
+# Combine the three stock data sets
+colnames(sta)[1] <- "State" 
+# Rename first column (AL, AK, AZ...)
+colnames(sta)[10] <- "Region"
+# Rename the 10th column "Region"
+state_stats <- as_tibble(sta)
+# Make a tibble of the new data set
+```
+
+Now we have a dataset called "state_stats" with two useful columns added on.
+
+------------------------------------------------------------------------
+
+```{r, echo = TRUE}
+state_stats 
+```
+
+------------------------------------------------------------------------
+
+```{r, echo = TRUE}
+# And another boxplot
+ggplot(data = state_stats, mapping = aes(x = Region, y = HS.Grad)) + 
+  geom_boxplot() + 
+  coord_flip() +
+  labs(title = "Variation in State Percentage of HS Graduates") +
+  labs(subtitle = "by region of USA (1970)")
+```
+
+------------------------------------------------------------------------
+
+Using the state_stats data set that we constructed, we can plot percent high-school graduates (1970) on the x-axis, and per capita income (1974) on the y-axis
+
+```{r, echo = TRUE}
+ggplot(data = state_stats, mapping = aes(x = HS.Grad, y = Income)) +
+  geom_point()
+```
+
+## Using state abbreviations as markers (more about this in 28.3)
+
+```{r, echo = TRUE}
+ggplot(data = state_stats, mapping = aes(x = HS.Grad, y = Income)) +
+  geom_text(aes(label = State), size=2)
+```
