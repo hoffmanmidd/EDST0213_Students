@@ -2,6 +2,8 @@
 title: "Thorndike Pages 23 - 28"
 author: "Steve Hoffman"
 format: revealjs
+html: 
+  self-contained: true
 editor: visual
 ---
 
@@ -35,21 +37,25 @@ install.packages("tidyverse")
 # Inputing, Tidying and Wrangling Thorndike pp. 23 - 28
 
 ## CLEAR WORKSPACE
+
 ```{r, echo = TRUE}
 rm(list=ls())
 ```
 
 ## LOAD PACKAGES
+
 ```{r, echo = TRUE}
 library(tidyverse)
 ```
 
 ## READ IN DATA
+
 ```{r, echo = TRUE}
 Table.2.1 <- read_csv(file = "Table.2.1.csv")
 ```
 
 ## CLEAN DATA
+
 ```{r, echo = TRUE}
 # Create a tibble (coerce the data into tidyverse data frame)
 
@@ -57,6 +63,7 @@ as_tibble(Table.2.1)
 ```
 
 ## Make column "Gender" into factors and label it
+
 ```{r, echo = TRUE}
 Table.2.1 = Table.2.1 %>% mutate(Gender = factor(Gender, levels=c("1", "2"), labels=c("male", "female")))
 ```
@@ -65,9 +72,10 @@ Table.2.1 = Table.2.1 %>% mutate(Gender = factor(Gender, levels=c("1", "2"), lab
 
 From page 27 of Thorndike: "One way to define measurement is *the assignment of numbers to objects according to a set of rules*. The set of rules is called a scale. Knowiing the scale that has been used to assigned the numbers is critical to proper interpretation of the measurement. For example, Ms. Johnson and Mr. Cordero assigned the number 1 to their male students and the number 2 to their female students."
 
-"When numbers are used in this way, the scale is called a **nominal scale**. 
+"When numbers are used in this way, the scale is called a **nominal scale**.
 
-## Make column "Class" into factors and label 
+## Make column "Class" into factors and label
+
 In the same way, which classroom students are in is also going to be labeled with a nominal scale that we will change into a factor.
 
 ```{r, echo = TRUE}
@@ -75,23 +83,27 @@ Table.2.1 = Table.2.1 %>% mutate(Class = factor(Class, levels=c("1", "2"), label
 ```
 
 ## Coerce scores to be integers
-This is optional, but I wanted to make this explicit. Sometimes cutting and pasting Excel numbers can cause the data to get funky. 
+
+This is optional, but I wanted to make this explicit. Sometimes cutting and pasting Excel numbers can cause the data to get funky.
 
 ```{r, echo = TRUE}
 Table.2.1 <- Table.2.1 %>% mutate(Reading = as.integer(Reading), Spelling = as.integer(Spelling), Math = as.integer(Math))
 ```
 
 ## Look at the structure of the data
+
 ```{r, echo = TRUE}
 str(Table.2.1)
 ```
+
 ## display summary on your console
+
 ```{r, echo = TRUE}
 summary(Table.2.1)
 ```
 
 ## Write csv file of cleaned up Thorndike table
+
 ```{r, echo = TRUE}
 write_csv(Table.2.1, "Table.2.1_clean.csv")
 ```
-
