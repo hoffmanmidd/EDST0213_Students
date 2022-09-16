@@ -1,0 +1,206 @@
+---
+title: "Thorndike_29_39"
+format: revealjs
+editor: visual
+---
+
+## Make figures replicating Thorndike pp. 28 - 39
+
+```{r, echo = TRUE}
+
+## CLEAR WORKSPACE ####
+rm(list=ls())
+
+## LOAD PACKAGES ####
+library(tidyverse)
+
+## READ IN DATA ####
+# read data from your own computer
+Table.2.1 <- read_csv(file = "Table.2.1_clean.csv") 
+```
+
+## Table. 2.1
+
+```{r, echo = TRUE}
+Table.2.1
+```
+
+## Make Frequency Distribution (p. 29)
+
+```{r, echo = TRUE}
+# Display the frequency of math scores on Console
+
+table(Table.2.1$Math)
+```
+
+------------------------------------------------------------------------
+
+```{r, echo = TRUE}
+# Produce the Frequency Distribution as an object
+Table.2.2 <-cbind(Freq=table(Table.2.1$Math))
+
+# Display Table.2.2 on Console vertically (Note: 31 levels)
+Table.2.2
+```
+
+## One way to fix the lack of "zeros" that are shown on p. 29
+
+```{r, echo = TRUE}
+# Define 42 levels between 19 & 60
+Table.2.2 <- factor(Table.2.1$Math, levels = c(60:19)) 
+
+# Make Table.2.2 a vertically shown object
+Table.2.2 <- cbind(Freq=table(Table.2.2)) 
+
+# Make Table.2.2 a data frame (was a vector)
+Table.2.2 <- data.frame(Table.2.2)
+
+# Add a second column using the row names (60 - 19)
+Table.2.2 <- Table.2.2 %>%
+  mutate(Table.2.2, ScoreX = row.names(Table.2.2), .before = 1) 
+```
+
+------------------------------------------------------------------------
+
+```{r, echo = TRUE}
+Table.2.2 # Display on Console
+```
+
+## Grouped Frequency Distribution (p. 31)
+
+```{r, echo = TRUE}
+# create a vector called "bins", counting by threes
+bins <- seq(17, 62, by=3) 
+# NOTE: Starting at 17 lines up with Thorndike
+
+# Then create a vector called "Interval"
+Interval <- cut(Table.2.1$Math, bins)
+# The "cut()" command divides the range of Table.2.1$Math into intervals and codes the values in x according to which interval they fall.
+
+table(Interval) # Produces a horizontal table
+
+# transform() makes a vertical table like Table.2.3
+Table.2.3 <- transform(table(Interval))
+```
+
+------------------------------------------------------------------------
+
+```{r, echo = TRUE}
+
+# Display on console
+arrange(Table.2.3, desc(Interval)) 
+# Note that arrange() and desc() reorder the table from high to low
+```
+
+## Cumulative Frequency Distribution (p. 35)
+
+```{r, echo = TRUE}
+# Create data frame of Math scores
+# Note: There are much more elegant ways to do this.
+Table.2.4 <- data.frame(Table.2.3) %>% 
+  mutate(Cumulative_Frequency = cumsum(Freq)) %>% 
+  mutate(Cumulative_Percent = round(100*cumsum(Freq)/52))
+```
+
+## Display on console
+
+```{r, echo = TRUE}
+arrange(Table.2.4, desc(Interval)) 
+```
+
+## Histograms
+```{r, echo = TRUE}
+# Histogram of Math
+math.hist = ggplot(Table.2.1, aes(x = Math, y = ..count..)) +
+  geom_histogram(binwidth = 3, color = "black", fill = "grey") + 
+  theme_classic() +
+  labs(x = "Mathematics test scores",
+       y = "Frequency") +
+  scale_x_continuous(breaks = 17 + c(0:15)*3) +
+  scale_y_continuous(breaks = 0 + c(0:6)*2) + 
+  ggtitle("Figure 2-1\nHistogram of 52 mathematics scores")
+
+math.hist # display the figure
+```
+
+---
+
+```{r, echo = TRUE}
+math.hist # display the figure
+```
+
+
+## Cumulative Frequency Curve
+
+```{r, echo = TRUE}
+# Again, this is one way of approaching it. Not super elegant though
+MathByThrees <- data.frame(Table.2.4) %>%
+  mutate(Threes = 20 + c(0:14)*3) 
+
+# Figure 2-3
+ggplot(MathByThrees, aes(x=Threes, y=Cumulative_Frequency)) +
+  geom_line() +
+  geom_point() +
+  theme_classic() +
+  labs(x = "Math Score",
+       y = "Cumulative frequency") +
+  ggtitle("Figure 2-3\nCumulative frequency curve") +
+  scale_x_continuous(breaks = 18 + c(0:14)*3)
+```
+
+------------------------------------------------------------------------
+
+```{r, echo = FALSE}
+ggplot(MathByThrees, aes(x=Threes, y=Cumulative_Frequency)) +
+  geom_line() +
+  geom_point() +
+  theme_classic() +
+  labs(x = "Math Score",
+       y = "Cumulative frequency") +
+  ggtitle("Figure 2-3\nCumulative frequency curve") +
+  scale_x_continuous(breaks = 18 + c(0:14)*3)
+```
+
+------------------------------------------------------------------------
+
+```{r, echo = FALSE}
+
+ggplot(MathByThrees, aes(x=Threes, y=Cumulative_Percent)) +
+  geom_line() +
+  geom_point() +
+  theme_classic() +
+  labs(x = "Math Score",
+       y = "Frequency") +
+  scale_x_continuous(breaks = 20 + c(0:14)*3) +
+  scale_y_continuous(breaks = 0 + c(0:5)*20) + 
+  ggtitle("Figure 2-4\nCumulative frequency curve\nProduced by EXCEL")
+```
+
+## Plotting an empirical cumulative distribution function for Math
+
+Because really, why put them in bins when you want to look at how it all comes together? 
+```{r, echo = TRUE}
+ggplot(Table.2.1) +
+  stat_ecdf(aes(x=Math)) + 
+  #Produce empirical cumulative density function
+  scale_y_continuous(labels = scales::percent) + 
+  #change from proportion to percentage
+  theme_classic() +
+  labs(x = "Math Score",
+       y = "Cumulative percentage") +
+  ggtitle("Cumulative frequency (step curve)") 
+```
+
+---
+
+```{r, echo = FALSE}
+ggplot(Table.2.1) +
+  stat_ecdf(aes(x=Math)) + 
+  #Produce empirical cumulative density function
+  scale_y_continuous(labels = scales::percent) + 
+  #change from proportion to percentage
+  theme_classic() +
+  labs(x = "Math Score",
+       y = "Cumulative percentage") +
+  ggtitle("Cumulative frequency (step curve)") 
+```
