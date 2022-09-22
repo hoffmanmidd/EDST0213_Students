@@ -1,0 +1,121 @@
+---
+title: "Class Slides"
+author: "Steve Hoffman"
+date: "22 September 2022"
+output: ioslides_presentation
+---
+
+```{r setup, include=TRUE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Really Getting our R on
+
+This is an R Markdown presentation. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document.
+
+Chapter 27 of *R for Data Science* introduces us to this function.
+
+You'll be submitting an R Markdown file next week for DAM1
+
+## What we'll cover today
+
+-   Chapter 8 Workflow: projects
+-   Chapter 6 Workflow: scripts
+-   Chapter 27 R Markdown
+-   Thorndike page 40, 46 & 47
+-   Boxplots
+-   Data-analytic Memo #1
+
+## Chapter 8 Workflow: projects
+
+There's some introductory notes about "what is real?" and "where does my data live?". But the advice that they are conveying really starts in section 8.4 RStudio projects
+
+They suggest creating a new project in a new directory. When you do this, RStudio creates a folder on your computer. You can also do this with Finder (if you are a Mac person). It's been a while since I used a PC, but there's got to be a similar way.
+
+## Your turn
+
+Let's take a minute to make sure everyone can do this part. I'll show you on my own computer, too.
+
+## Chapter 6 Workflow: scripts
+
+So far you've been using the console to run code. That's a great place to start, but you'll find it gets cramped pretty quickly as you create more complex ggplot2 graphics and dplyr pipes. To give yourself more room to work, it's a great idea to use the script editor. Open it up either by clicking the File menu, and selecting New File, then R script, or using the keyboard shortcut Cmd/Ctrl + Shift + N. Now you'll see four panes:
+
+## Your turn again
+
+Let's take a minute to make sure everyone can do this part. I'll show you on my own computer, too.
+
+## Chapter 27 R Markdown
+
+27.1.1 Prerequisites You need the rmarkdown package, but you don't need to explicitly install it or load it, as RStudio automatically does both when needed.
+
+## 27.2.1 Exercises
+
+2.  Create a new R Markdown document with File \> New File \> R Markdown... Knit it by clicking the appropriate button. Knit it by using the appropriate keyboard short cut. Verify that you can modify the input and see the output update.
+
+Show this to everyone, Hoffman...
+
+## Thorndike page 40, 46 & 47
+
+Before you work on DAM1, you should read pages 39 - 56 of the Thorndike PDFs (assigned for Tuesday, Sept 27)
+
+In DAM 1, I've asked you to produce a several (many) Boxplots
+
+```{r, echo = TRUE}
+## LOAD PACKAGES 
+library(tidyverse)
+```
+
+## READ IN DATA (from your own computer)
+
+```{r, echo = TRUE}
+Table.2.1 <- read_csv(file = "Table.2.1_clean.csv") 
+```
+
+## The Table.2.1 tibble
+
+This is an electronic version of what the Thorndike book printed on pages 24 & 25 with numbers for Gender and Class replaced
+
+```{r, echo = TRUE}
+Table.2.1
+```
+
+## Boxplots (and 3.9 stuff)
+
+For review (or if you haven't encountered them before), boxplots summarize the distribution of a continuous variable. A boxplots displays five summary statistics: the median (shown as a line), the first and third quartile (the box) and two whiskers showing the extent of data 1.5 IQR beyond the box, and any "outlying" points individually. (no outliers in the Spelling data here)
+
+## A boxplot of "Spelling" 
+
+```{r, echo = TRUE}
+ggplot(data = Table.2.1, mapping = aes(x = Spelling)) + 
+  geom_boxplot() 
+```
+
+## grouped by classroom teacher 
+
+This shows that Ms Johnson's class has a higher median Spelling score (64) than Mr. Cordero's class (53).
+
+------------------------------------------------------------------------
+
+```{r, echo = TRUE}
+ggplot(data = Table.2.1, mapping = aes(x = Class, y = Spelling)) + 
+  geom_boxplot() + 
+  coord_flip() # Make Spelling the x variable and Class the y variable
+```
+
+## What's the IQR?
+
+If we sorted a column from smallest to largest, the middle data point is the the median: the value that separates the top half from the bottom half. 
+
+If we cut the bottom half in half, that spot is the 25th percentile. 
+
+And if we cut the top half in half, that spot is the 75th percentile. 
+
+## For spelling 
+The 25 percentile is 51. The Median is 57. And the 75th percentile is 64.
+```{r, echo = TRUE}
+ggplot(data = Table.2.1, mapping = aes(x = Spelling)) + 
+  geom_boxplot() 
+```
+
